@@ -1,1 +1,45 @@
-<!-- TODO: Level 4. See docs/01_brief.md. -->
+<h2>Check one client</h2>
+
+<label>
+  Client ID
+  <input data-testid="client-id" type="text" [(ngModel)]="clientId" />
+</label>
+<label>
+  Cutover date
+  <input data-testid="cutover-date" type="date" [(ngModel)]="cutoverDate" />
+</label>
+<button data-testid="check" type="button" [disabled]="!canCheck()" (click)="check()">Check</button>
+
+@if (loading()) {
+  <p data-testid="loading">Checking...</p>
+}
+
+@if (error()) {
+  <p data-testid="error" class="error">{{ error() }}</p>
+}
+
+@if (result(); as report) {
+  <p data-testid="verdict">{{ report.isReady ? 'Ready for cutover' : 'Not ready for cutover' }}</p>
+  <p data-testid="summary">
+    {{ report.summary.total }} policies: {{ report.summary.ready }} ready,
+    {{ report.summary.blocked }} blocked, {{ report.summary.excluded }} excluded
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Policy</th>
+        <th>Status</th>
+        <th>Issues</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (policy of report.policies; track policy.policyNumber) {
+        <tr data-testid="policy-row">
+          <td data-testid="policy-number">{{ policy.policyNumber }}</td>
+          <td data-testid="policy-status">{{ policy.status }}</td>
+          <td data-testid="policy-issues">{{ issueText(policy) }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
