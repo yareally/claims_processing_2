@@ -1,0 +1,25 @@
+:host {
+  display: block;
+  margin-bottom: 2rem;
+}
+
+label {
+  margin-right: 1rem;
+}
+
+table {
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+th,
+td {
+  border: 1px solid #ccc;
+  padding: 0.25rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.error {
+  color: #b00020;
+}
