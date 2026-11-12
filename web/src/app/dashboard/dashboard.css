@@ -1,0 +1,19 @@
+table {
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border: 1px solid #ccc;
+  padding: 0.25rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.count {
+  text-align: right;
+}
+
+.error {
+  color: #b00020;
+}
