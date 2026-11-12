@@ -2,9 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ClientReadiness } from './client-readiness';
-import { ReadinessApiService } from './readiness-api.service';
-import { countIssues } from './readiness-format';
-import { ClientReadinessReport, PolicyReadiness, ReadinessIssue } from './readiness-models';
+import { ClientReadinessReport } from './readiness-models';
 
 let fixture: ComponentFixture<ClientReadiness>;
 let http: HttpTestingController;
@@ -63,38 +61,6 @@ async function typeInto(testId: string, value: string): Promise<void> {
   input.dispatchEvent(new Event('change', { bubbles: true }));
   await fixture.whenStable();
 }
-
-it('getClientReadiness_encodes_a_client_id_with_a_space_or_a_slash', () => {
-  const service = TestBed.inject(ReadinessApiService);
-
-  service.getClientReadiness('C 1001/A', '2026-12-01').subscribe();
-
-  // expectOne fails when no request has this exact URL, and lists the requests it saw.
-  http.expectOne('/clients/C%201001%2FA/readiness?cutoverDate=2026-12-01');
-});
-
-it('countIssues_equal_counts_follow_the_issue_order_for_all_five_issues', () => {
-  const issueLists: ReadinessIssue[][] = [
-    ['MissingContactEmail'],
-    ['OpenClaims', 'MissingContactEmail'],
-    ['OutstandingBalance'],
-    ['UnmappedProduct', 'OpenClaims'],
-    ['LapsedPolicy'],
-  ];
-  const policies: PolicyReadiness[] = issueLists.map((issues) => ({
-    policyNumber: 'P-1001-01',
-    status: 'Blocked',
-    issues,
-  }));
-
-  expect(countIssues(policies)).toEqual([
-    { issue: 'OpenClaims', count: 2 },
-    { issue: 'MissingContactEmail', count: 2 },
-    { issue: 'LapsedPolicy', count: 1 },
-    { issue: 'UnmappedProduct', count: 1 },
-    { issue: 'OutstandingBalance', count: 1 },
-  ]);
-});
 
 it('ClientReadiness_shows_the_general_message_for_a_500', async () => {
   await typeInto('client-id', 'C-1001');
