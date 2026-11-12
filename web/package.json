@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test --watch=false"
+    "test": "ng test --watch=false",
+    "test:all": "ng test --watch=false --runner-config=vitest-all.config.mts"
   },
   "private": true,
   "packageManager": "npm@11.12.1",
