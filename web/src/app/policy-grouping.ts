@@ -1,36 +1,30 @@
 import { ClientGroup, PolicySummary } from './policy-models';
 
 export function groupPoliciesByClient(policies: PolicySummary[]): ClientGroup[] {
-  const groups = new Map<string, ClientGroup>();
+  const groups: Record<string, ClientGroup> = {};
   for (const policy of policies) {
-    let group = groups.get(policy.clientId);
-    if (group === undefined) {
-      group = {
-        clientId: policy.clientId,
-        clientName: policy.clientName.trim(),
-        policies: [],
-        readyCount: 0,
-        blockedCount: 0,
-        excludedCount: 0,
-      };
-      groups.set(policy.clientId, group);
-    }
+    const key = policy.clientName;
+    groups[key] ??= {
+      clientId: policy.clientId,
+      clientName: policy.clientName,
+      policies: [],
+      readyCount: 0,
+      blockedCount: 0,
+      excludedCount: 0,
+    };
+    const group = groups[key];
     group.policies.push(policy);
-    switch (policy.readiness) {
-      case 'Ready':
-        group.readyCount++;
-        break;
-      case 'Blocked':
-        group.blockedCount++;
-        break;
-      case 'Excluded':
-        group.excludedCount++;
-        break;
+    if (policy.status === 'Cancelled') {
+      group.excludedCount++;
+    } else if (isPolicyReady(policy)) {
+      group.readyCount++;
+    } else {
+      group.blockedCount++;
     }
   }
-  return [...groups.values()].sort(
-    (a, b) =>
-      a.clientName.localeCompare(b.clientName, undefined, { sensitivity: 'base' }) ||
-      a.clientId.localeCompare(b.clientId),
-  );
+  return Object.values(groups).sort((a, b) => (a.clientName < b.clientName ? -1 : 1));
+}
+
+function isPolicyReady(policy: PolicySummary): boolean {
+  return policy.outstandingBalance === 0 && policy.openClaimCount === 0;
 }
