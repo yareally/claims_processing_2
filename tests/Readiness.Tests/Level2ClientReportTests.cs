@@ -10,7 +10,7 @@ public class Level2ClientReportTests
     private readonly ReadinessEvaluator _evaluator = new(new InMemoryProductCatalog(["AUTO-PERS"]));
 
     [Fact]
-    public void EvaluateClient_sorts_policies_by_policy_number_in_ordinal_order()
+    public void EvaluateClient_sorts_policies_by_policy_number_as_text_not_as_numbers()
     {
         PolicyRecord[] policies =
         [

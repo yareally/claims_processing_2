@@ -1,6 +1,6 @@
 # The dashboard question
 
-The operations team says the dashboard's numbers don't match what they see per client. Some clients look ready on the dashboard but fail the readiness check. One client appears twice. Some clients are missing.
+The operations team says the dashboard's numbers don't match what they see per client. Some clients look ready on the dashboard but fail the readiness check. One client appears more than once. Some clients are missing.
 
 **Explain the general issue with how the dashboard groups policy data.** Then say how you would fix it.
 

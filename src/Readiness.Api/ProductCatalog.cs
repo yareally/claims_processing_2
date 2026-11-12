@@ -6,9 +6,14 @@ public interface IProductCatalog
     bool IsMapped(string legacyProductCode);
 }
 
-public sealed class InMemoryProductCatalog(IEnumerable<string> mappedCodes) : IProductCatalog
+public sealed class InMemoryProductCatalog : IProductCatalog
 {
-    private readonly HashSet<string> _mappedCodes = new(mappedCodes, StringComparer.Ordinal);
+    private readonly HashSet<string> _mappedCodes;
+
+    public InMemoryProductCatalog(IEnumerable<string> mappedCodes)
+    {
+        _mappedCodes = new HashSet<string>(mappedCodes, StringComparer.Ordinal);
+    }
 
     public bool IsMapped(string legacyProductCode) => _mappedCodes.Contains(legacyProductCode);
 }

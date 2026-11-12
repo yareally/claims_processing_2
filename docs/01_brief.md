@@ -62,7 +62,7 @@ The endpoint is `GET /clients/{clientId}/readiness?cutoverDate=2026-12-01`. Chec
 |---|---|
 | `cutoverDate` is missing, or is not a date in the form `yyyy-MM-dd` | 400, with `Results.Problem(...)` |
 | No client has this `clientId` (`IClientRepository.FindClientAsync` returns null) | 404, with `Results.NotFound()` |
-| Otherwise | 200, with `Results.Ok(report)` |
+| Otherwise | Get the client's policies with `IClientRepository.GetPoliciesAsync`, pass them to `EvaluateClient`, and return 200 with `Results.Ok(report)` |
 
 Check the date before you look up the client. Parse it with `DateOnly.TryParseExact(text, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date)`.
 
@@ -85,7 +85,7 @@ An example 200 response:
 
 ## Level 3: the dashboard grouping
 
-The dashboard in `web/` lists policies grouped by client. The function `groupPoliciesByClient` in `web/src/app/policy-grouping.ts` builds those groups, and it has bugs. Fix it so that:
+The dashboard in `web/` lists policies grouped by client. It needs your Level 1 code, because the server sets each policy's readiness with `EvaluatePolicy`. Until Level 1 works, the dashboard shows "Could not load policies." The function `groupPoliciesByClient` in `web/src/app/policy-grouping.ts` builds those groups, and it has bugs. Fix it so that:
 
 1. It groups by `clientId`. Two clients can share a name, and the old system typed one client's name in different ways.
 2. Each group's `clientName` is the first policy's `clientName` for that client, with spaces trimmed from both ends.
