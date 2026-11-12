@@ -7,7 +7,10 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test --watch=false",
-    "test:all": "ng test --watch=false --runner-config=vitest-all.config.mts"
+    "test:all": "ng test --watch=false --runner-config=vitest-all.config.mts",
+    "test:level3": "ng test --watch=false --include=src/app/client-readiness/readiness-format.spec.ts --include=src/app/client-readiness/readiness-api.service.spec.ts",
+    "test:level4": "ng test --watch=false --include=src/app/client-readiness/client-readiness.spec.ts",
+    "test:level5": "ng test --watch=false --include=src/app/policy-grouping.spec.ts"
   },
   "private": true,
   "packageManager": "npm@11.12.1",
