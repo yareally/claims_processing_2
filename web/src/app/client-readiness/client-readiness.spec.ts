@@ -54,7 +54,7 @@ function textsOf(testId: string): string[] {
   return Array.from(found, (item) => (item.textContent ?? '').replace(/\s+/g, ' ').trim());
 }
 
-// Types a value into an input the way a person does, then waits for the page to update.
+// Sets the input's value and sends `input` and `change` events, then waits for the page to update.
 async function typeInto(testId: string, value: string): Promise<void> {
   const input = element<HTMLInputElement>(testId);
   input.value = value;

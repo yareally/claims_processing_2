@@ -133,7 +133,11 @@ Write the component in `client-readiness.ts` and its template `client-readiness.
 | `policy-number`, `policy-status`, `policy-issues` | `<td>` in each row | The policy number; the status; the `describeIssue` sentences joined with one space, or `None` when there are no issues |
 | `error` | any | After a failed check. 404: `No client found with ID C-9999.` (the trimmed ID). 400: `The cutover date is not valid.` Any other error: `The readiness check failed. Try again.` |
 
-A new check clears the last result and the last error. Show nothing from the table, verdict or summary while there is no result.
+A new check clears the last result and the last error. Show no verdict, summary or policy rows while there is no result.
+
+When a part has nothing to show, leave its element off the page, for example with `@if`. The tests check that the element is missing, so an element hidden with `[hidden]`, or left on the page empty, fails them.
+
+Bind the inputs with `ngModel`, `(input)` or `(change)`. The tests set each input's value and send `input` and `change` events, the way a browser does when someone types or picks a date.
 
 **Use signals for the component's state** (`signal()`, `computed()`). This app runs without zone.js, Angular's older way of noticing changes. If the component keeps its state in plain fields, the screen does not update when the server's answer arrives.
 

@@ -105,6 +105,7 @@ AssertionError: expected [ 'Checking...' ] to deeply equal []
 - The first value is what your code produced. The second is what the test expected.
 - `Error: TODO: Level 3` means the function still has its TODO.
 - `No element with data-testid="client-id" on the page` means your template is missing that element, or its `data-testid` is spelled differently.
+- `expected [ 'Checking...' ] to deeply equal []` while your screen shows nothing means the element is still on the page, only hidden. Use `@if` to leave it off the page.
 
 ### See the whole system run
 
@@ -126,7 +127,7 @@ To call the endpoint yourself: http://localhost:5100/clients/C-1001/readiness?cu
    ```
    git add -A
    git commit -m "My attempt"
-   git checkout solution -- tests/Readiness.Tests/Hidden web/src/app/client-readiness/client-readiness.hidden.spec.ts web/src/app/policy-grouping.hidden.spec.ts
+   git checkout solution -- tests/Readiness.Tests/Hidden 'web/src/app/*.hidden.spec.ts'
    dotnet test --filter Hidden
    cd web && npm run test:all
    ```
