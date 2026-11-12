@@ -71,11 +71,14 @@ Each run stops at the first failure. To see every failure, run `dotnet test -- x
 ### How to read a C# failure
 
 ```
-Failed Readiness.Tests.Level1PolicyRulesTests.EvaluatePolicy_lapsed_policy_is_blocked
-Assert.Equal() Failure: Collections differ
+Failed EvaluatePolicy_lapsed_policy_is_blocked [11 ms]
+Error Message:
+ Assert.Equal() Failure: Collections differ
+         ↓ (pos 0)
 Expected: [LapsedPolicy]
 Actual:   []
-  at ...Level1PolicyRulesTests.cs:line 64
+Stack Trace:
+   at Readiness.Tests.Level1PolicyRulesTests.EvaluatePolicy_lapsed_policy_is_blocked() in .../Level1PolicyRulesTests.cs:line 66
 ```
 
 - The test name starts with the method to fix, then says what should happen.
