@@ -135,7 +135,7 @@ Write the component in `client-readiness.ts` and its template `client-readiness.
 
 A new check clears the last result and the last error. Show nothing from the table, verdict or summary while there is no result.
 
-**Use signals for the component's state** (`signal()`, `computed()`). This app runs without zone.js, Angular's older way of noticing changes. If you set a plain field inside `subscribe`, the screen does not update.
+**Use signals for the component's state** (`signal()`, `computed()`). This app runs without zone.js, Angular's older way of noticing changes. If the component keeps its state in plain fields, the screen does not update when the server's answer arrives.
 
 ## Level 5 (optional): fix the dashboard grouping
 

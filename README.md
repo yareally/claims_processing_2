@@ -3,10 +3,11 @@
 A timed practice run for an assessment that asks you to:
 
 - implement a client readiness endpoint in C# that checks policies and reports whether they are ready for cutover
+- build the screen that shows the result, in Angular and TypeScript (TypeScript is JavaScript with types)
 - explain a general issue with how the dashboard groups policy data
 - talk through your solution aloud
 
-The assessment itself will differ. This project copies its shape from the invitation text only. The dashboard is Angular with TypeScript, which is JavaScript with types.
+The assessment itself will differ. This project copies its shape from the invitation text only. Because the role is full stack, about half the coding is front end.
 
 ## Set up before the timed run
 
@@ -48,22 +49,30 @@ The minutes are estimates. Adjust them after your first run.
 | Minutes | Stage | What to do |
 |---|---|---|
 | 5 | Get familiar | Read `docs/01_brief.md`. Find the TODOs. Run the tests. Answer the design questions in `docs/05_syntax_sheet.md` aloud. |
-| 15 | Level 1 | `EvaluatePolicy`: one policy's rules. |
-| 15 | Level 2 | `EvaluateClient` and the endpoint `GetClientReadinessAsync`. |
-| 8 | Level 3 | Fix `groupPoliciesByClient` in the dashboard. |
-| 5 | Dashboard question | `docs/02_dashboard_question.md`. |
-| 5 | Walkthrough | Record yourself answering `docs/03_walkthrough.md`. |
+| 12 | Level 1 (C#) | `EvaluatePolicy`: one policy's rules. |
+| 10 | Level 2 (C#) | `EvaluateClient` and the endpoint `GetClientReadinessAsync`. |
+| 8 | Level 3 (TypeScript) | `describeIssue`, `countIssues` and the HTTP call `getClientReadiness`. |
+| 12 | Level 4 (Angular) | The `ClientReadiness` component: form, loading, errors, verdict, table. |
+| 4 | Dashboard question | `docs/02_dashboard_question.md`. |
+| 4 | Walkthrough | Record yourself answering `docs/03_walkthrough.md`. |
+
+Level 5 (fixing `groupPoliciesByClient`) is optional. Do it after the timed run, or if time is left.
+
+To practise only the front end, do Levels 3 and 4 in 25 minutes. Their tests don't need the C# code.
 
 Say your reasoning aloud as you work. The assessment asks for this, and it takes practice.
 
-If time runs short, finish Level 1 first. A working Level 1 is worth more than a half-finished Level 3. Then say aloud what you would do next.
+If time runs short, finish a level before you start the next. A working Level 3 is worth more than a half-finished Level 4. Then say aloud what you would do next.
 
 ## Commands
 
 ```
 dotnet test --filter Level1
 dotnet test --filter Level2
-cd web && npm test
+cd web
+npm run test:level3
+npm run test:level4
+npm run test:level5
 ```
 
 Each run stops at the first failure. To see every failure, run `dotnet test -- xUnit.StopOnFail=false`, or `npm run test:all` in `web`.
@@ -88,11 +97,14 @@ Stack Trace:
 ### How to read a TypeScript failure
 
 ```
-FAIL  src/app/policy-grouping.spec.ts > groupPoliciesByClient_two_clients_with_the_same_name_stay_separate
-AssertionError: expected [ 'C-1001' ] to deeply equal [ 'C-1001', 'C-1042' ]
+FAIL  src/app/client-readiness/client-readiness.spec.ts > ClientReadiness_shows_checking_only_while_the_check_runs
+AssertionError: expected [ 'Checking...' ] to deeply equal []
 ```
 
-The first list is what your code returned. The second is what the test expected.
+- The test name starts with the function or component to fix.
+- The first value is what your code produced. The second is what the test expected.
+- `Error: TODO: Level 3` means the function still has its TODO.
+- `No element with data-testid="client-id" on the page` means your template is missing that element, or its `data-testid` is spelled differently.
 
 ### See the whole system run
 
@@ -103,7 +115,7 @@ dotnet run --project src/Readiness.Api --urls http://localhost:5100
 cd web && npm start
 ```
 
-Then open http://localhost:4200 in the browser. The dashboard needs Level 1, because the server uses `EvaluatePolicy` to set each policy's readiness. Until then it says "Could not load policies."
+Then open http://localhost:4200 in the browser. Your `ClientReadiness` screen is at the top and needs Levels 1 to 4. Try `C-1001`, `C-1003` (ready) and `C-9999` (not found). The dashboard below it needs Level 1; until then it says "Could not load policies."
 
 To call the endpoint yourself: http://localhost:5100/clients/C-1001/readiness?cutoverDate=2026-12-01
 
@@ -114,9 +126,9 @@ To call the endpoint yourself: http://localhost:5100/clients/C-1001/readiness?cu
    ```
    git add -A
    git commit -m "My attempt"
-   git checkout solution -- tests/Readiness.Tests/Hidden web/src/app/policy-grouping.hidden.spec.ts
+   git checkout solution -- tests/Readiness.Tests/Hidden web/src/app/client-readiness/client-readiness.hidden.spec.ts web/src/app/policy-grouping.hidden.spec.ts
    dotnet test --filter Hidden
-   cd web && npm test
+   cd web && npm run test:all
    ```
 
 2. Compare your code with the reference solution:
@@ -141,5 +153,6 @@ To try again from a clean start, run `git switch main`, then `git switch -c atte
 |---|---|
 | `src/Readiness.Api` | The API. Your C# TODOs are in `Readiness/ReadinessEvaluator.cs` and `ReadinessEndpoints.cs`. |
 | `tests/Readiness.Tests` | The C# tests, one class per level. |
-| `web` | The Angular dashboard. Your TypeScript TODO is `src/app/policy-grouping.ts`. |
+| `web/src/app/client-readiness` | Your Levels 3 and 4: `readiness-format.ts`, `readiness-api.service.ts`, `client-readiness.ts` and `client-readiness.html`. The tests are the `.spec.ts` files next to them. |
+| `web/src/app/dashboard`, `web/src/app/policy-grouping.ts` | The existing dashboard, for the question and the optional Level 5. |
 | `docs/` | The brief, the dashboard question, the walkthrough, likely questions and the syntax sheet. |

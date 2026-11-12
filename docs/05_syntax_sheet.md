@@ -83,13 +83,91 @@ const sortedCopy = [...customers].sort(compare);
 const renamed = { ...customer, name: customer.name.trim() };
 ```
 
+## Angular
+
+```ts
+// A component with signals for its state
+import { Component, computed, inject, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+
+@Component({
+  selector: 'app-order-lookup',
+  templateUrl: './order-lookup.html',
+})
+export class OrderLookup {
+  private readonly api = inject(OrderApiService);
+
+  protected readonly orderId = signal('');
+  protected readonly order = signal<Order | null>(null);
+  protected readonly message = signal('');
+  protected readonly busy = signal(false);
+  protected readonly canSearch = computed(() => this.orderId().trim() !== '' && !this.busy());
+
+  protected search(): void {
+    this.order.set(null);
+    this.message.set('');
+    this.busy.set(true);
+    this.api.getOrder(this.orderId().trim()).subscribe({
+      next: (order) => {
+        this.order.set(order);
+        this.busy.set(false);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.message.set(error.status === 404 ? 'No such order.' : 'Something went wrong.');
+        this.busy.set(false);
+      },
+    });
+  }
+}
+```
+
+```html
+<!-- An input bound to a signal, without forms -->
+<input [value]="orderId()" (input)="orderId.set($any($event.target).value)" />
+<button [disabled]="!canSearch()" (click)="search()">Search</button>
+
+@if (busy()) {
+  <p>Searching...</p>
+}
+@if (order(); as found) {
+  <p>{{ found.items.length }} items</p>
+  <table>
+    @for (item of found.items; track item.sku) {
+      <tr>
+        <td>{{ item.sku }}</td>
+        <td>{{ item.notes.length === 0 ? 'None' : item.notes.join(' ') }}</td>
+      </tr>
+    }
+  </table>
+}
+```
+
+```ts
+// A service that calls the API
+@Injectable({ providedIn: 'root' })
+export class OrderApiService {
+  private readonly http = inject(HttpClient);
+
+  getOrder(orderId: string): Observable<Order> {
+    return this.http.get<Order>(`/orders/${encodeURIComponent(orderId)}`, { params: { expand: 'items' } });
+  }
+}
+
+// A lookup table the compiler checks for missing keys
+type Size = 'Small' | 'Large';
+const sizeLabels: Record<Size, string> = { Small: 'Fits in a pocket', Large: 'Needs a bag' };
+```
+
 ## Commands
 
 ```
 dotnet test --filter Level1
 dotnet test --filter Level2
 dotnet test -- xUnit.StopOnFail=false
-cd web && npm test
+cd web
+npm run test:level3
+npm run test:level4
+npm run test:all
 ```
 
 ## Design questions to answer aloud before you code
@@ -97,3 +175,4 @@ cd web && npm test
 1. What makes a policy excluded, and why should excluded policies never block a client?
 2. Which rules can apply to one policy at the same time?
 3. Where should readiness be worked out: on the server, in the browser, or both? Why?
+4. What does the `ClientReadiness` screen show before a check, during one, after a success, and after a failure?
