@@ -1,0 +1,10 @@
+{
+  "/policies": {
+    "target": "http://localhost:5100",
+    "secure": false
+  },
+  "/clients": {
+    "target": "http://localhost:5100",
+    "secure": false
+  }
+}
